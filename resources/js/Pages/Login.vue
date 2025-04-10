@@ -1,5 +1,4 @@
 <template>
-
     <section class="bg-white flex items-center justify-center h-full w-full">
       <div class="lg:grid lg:min-h-screen lg:grid-cols-12">
         <section class="relative flex h-32 items-end bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-6">
@@ -69,30 +68,29 @@
               </p>
             </div>
     
-            <div class="mt-8 flex flex-col gap-4">
+            <div class="mt-8 flex flex-col gap-6">
     
                 <input
+                  v-model="email"
                   type="email"
                   id="Email"
                   name="email"
                   placeholder="Correo electrónico"
-                  class="w-full border border-gray-200 rounded-xl p-3 text-sm text-gray-700 shadow-xs focus:border-none"
+                  class="w-full border border-gray-200 rounded-3xl p-5 text-sm text-gray-700 shadow-xs focus:border-none outline-none"
                 />
     
                 <input
+                  v-model="password"
                   type="password"
                   id="Password"
                   name="password"
                   placeholder="Contraseña"
-                  class="w-full border border-gray-200 rounded-xl p-3 text-sm text-gray-700 shadow-xs focus:border-none"
+                  class="w-full border border-gray-200 rounded-3xl p-5 text-sm text-gray-700 shadow-xs focus:border-none outline-none"
                 />
     
-    
-              <div class="flex flex-col md:flex-row items-center justify-between gap-5">
-                <button 
-                class="inline-block shrink-0 rounded-md border border-primary bg-primary px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-secondary focus:ring-3 focus:outline-hidden">
-                  Iniciar sesión
-                </button>
+                <Button :onclick="login" :isLoading="isLoading" />
+
+              <div class="flex flex-col w-80 items-center justify-between gap-5">
     
                 <p class="mt-4 text-sm text-gray-500 sm:mt-0">
                   Aun no tienes cuenta?
@@ -103,11 +101,40 @@
           </div>
         </main>
       </div>
+      <AlertError v-if="error" class="absolute top-0 left-0 right-0 mx-auto w-96" />
     </section>
   </template>
 
 <script setup>
 
 import imagen from '../asset/fondo.png'
+
+//components
+import Button from '../Components/Button.vue'
+import AlertError from '../Components/Alerts/AlertError.vue'
+
+//instance
+import { useUserStore } from '../Store/UserStore.js'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const userStore = useUserStore();
+const email = ref('')
+const password = ref('')
+const isLoading = ref(false)
+const error = ref(false)
+const router = useRouter()
+
+const login = async () => {
+  isLoading.value = true
+  const repsonse = await userStore.login(email.value, password.value);
+  isLoading.value = false
+
+  if (repsonse) {
+    router.push({ name: 'Home' })
+  } else {
+    error.value = true
+  }
+}
 
 </script>
