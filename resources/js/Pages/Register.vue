@@ -69,7 +69,15 @@
             </div>
     
             <div class="mt-8 flex flex-col gap-6">
-    
+                <input
+                  v-model="name"
+                  type="text"
+                  id="Name"
+                  name="name"
+                  placeholder="Nombre de usuario"
+                  class="w-full border border-gray-200 rounded-3xl p-5 text-sm text-gray-700 shadow-xs focus:border-none outline-none"
+                />
+
                 <input
                   v-model="email"
                   type="email"
@@ -88,13 +96,13 @@
                   class="w-full border border-gray-200 rounded-3xl p-5 text-sm text-gray-700 shadow-xs focus:border-none outline-none"
                 />
     
-                <Button :onclick="login" :isLoading="isLoading" />
+                <Button :onclick="register" :isLoading="isLoading" />
 
               <div class="flex flex-col w-80 items-center justify-between gap-5">
     
                 <p class="mt-4 text-sm text-gray-500 sm:mt-0">
-                  Aun no tienes cuenta?
-                  <span @click="navigateToRegister" class="text-gray-700 underline cursor-pointer">Registrate</span>.
+                  Ya tienes una cuenta?
+                  <span @click="navigateToLogin" class="text-gray-700 underline cursor-pointer">Inicia sesion</span>.
                 </p>
               </div>
             </div>
@@ -107,39 +115,42 @@
 
 <script setup>
 
-import imagen from '../asset/fondo.png'
+import { useRouter } from 'vue-router'
+import { ref } from 'vue'
+import { useUserStore } from '../Store/UserStore.js'
 
-//components
+import imagen from '../asset/fondo.png'
 import Button from '../Components/Button.vue'
 import AlertError from '../Components/Alerts/AlertError.vue'
 
-//instance
-import { useUserStore } from '../Store/UserStore.js'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-
-const userStore = useUserStore();
+const name = ref('')
 const email = ref('')
 const password = ref('')
+const router = useRouter()
 const isLoading = ref(false)
 const error = ref(false)
-const router = useRouter()
+const userStore = useUserStore()
 
-const login = async () => {
-  isLoading.value = true
-  const repsonse = await userStore.login(email.value, password.value);
-  isLoading.value = false
 
-  if (repsonse) {
-    router.push({ name: 'Home' })
-  } else {
-    error.value = true
-  }
+const register = async () => {
+    isLoading.value = true
+    if (name.value === '' || email.value === '' || password.value === '') {
+        isLoading.value = false
+        error.value = true
+        return
+    }
+
+    const repsonse = await userStore.register(name.value, email.value, password.value);
+    if (repsonse) {
+        router.push({ name: 'Home' })
+    } else {
+        error.value = true
+    }
+    isLoading.value = false
 }
 
-const navigateToRegister = () => {
-  console.log('navegando a registro')
-  router.push({ name: 'Register' })
+const navigateToLogin = () => {
+  router.push({ name: 'Login' })
 }
 
 </script>
