@@ -2,10 +2,11 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import Login from "../Pages/Login.vue";
 import Home from "../Pages/Home.vue";
+import Register from "../Pages/Register.vue";
 
 const routes = [
     {
-        path: "/login",
+        path: "/",
         name: "Login",
         component: Login,
     },
@@ -13,6 +14,11 @@ const routes = [
         path: "/home",
         name: "Home",
         component: Home,
+    },
+    {
+        path: "/register",
+        name: "Register",
+        component: Register,
     }
 ];
 
@@ -24,12 +30,16 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     const token = localStorage.getItem("token");
 
-    if (to.name !== "Login" && !token) {
-        next({ name: "Login" });
+    if (to.name !== "Login" && to.name !== "Register" && !token) {
+        return next({ name: "Login" });
     }
 
     if (to.name === "Login" && token) {
-        next({ name: "Home" });
+        return next({ name: "Home" });
+    }
+
+    if (to.name === "Register" && token) {
+        return next({ name: "Home" });
     }
 
     next();
