@@ -64,12 +64,12 @@ class AuthController extends Controller
         }
     }
     public function register(Request $request): JsonResponse
-{
+    {
     try {
         $validated = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed', // debe venir 'password_confirmation'
+            'password' => 'required|string', // debe venir 'password_confirmation'
         ]);
 
         if ($validated->fails()) {
@@ -95,7 +95,7 @@ class AuthController extends Controller
                 'user' => $user,
                 'token' => $token,
             ],
-        ], 201);
+        ], 200);
 
     } catch (\Throwable $e) {
         return response()->json([
