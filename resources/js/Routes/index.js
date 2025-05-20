@@ -3,6 +3,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import Login from "../Pages/Login.vue";
 import Home from "../Pages/Home.vue";
 import Register from "../Pages/Register.vue";
+import GroupList from "../Components/Feed/GroupList.vue";
+import GroupDetail from "../Components/Feed/GroupDetail.vue";
 
 const routes = [
     {
@@ -19,6 +21,16 @@ const routes = [
         path: "/register",
         name: "Register",
         component: Register,
+    },
+    {
+        path: "/groups",
+        name: "GroupList",
+        component: GroupList,
+    },
+    {
+        path: "/groups/:id",
+        name: "GroupDetail",
+        component: GroupDetail,
     }
 ];
 
@@ -34,16 +46,11 @@ router.beforeEach((to, from, next) => {
         return next({ name: "Login" });
     }
 
-    if (to.name === "Login" && token) {
-        return next({ name: "Home" });
-    }
-
-    if (to.name === "Register" && token) {
+    if ((to.name === "Login" || to.name === "Register") && token) {
         return next({ name: "Home" });
     }
 
     next();
-})
+});
 
 export default router;
-
