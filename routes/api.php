@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthController; // Tu controlador de autenticación
+use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController; // Tu controlador de posts generales
 
@@ -78,4 +78,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('groups/{group}/posts', [GroupPostController::class, 'index']);
     Route::post('groups/{group}/posts', [GroupPostController::class, 'store']);
+});
+
+// Comment routes
+Route::prefix('v1/comment')->middleware('auth:sanctum')->group(function () {
+   Route::post('/create', [CommentController::class, 'create']);
 });
