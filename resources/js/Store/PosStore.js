@@ -5,6 +5,7 @@ export const usePosStore = defineStore('post', {
     state: () => ({
         posts: [],
         commnets: [],
+        order_by: 'DESC',
     }),
 
     actions: {
@@ -12,13 +13,16 @@ export const usePosStore = defineStore('post', {
         /**
          * index
          */
-        async index() {
+        async index(order_by) {
             try {
                 const response = await axios.get(
                     '/api/v1/post/index',
                     {
                         headers: {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        },
+                        params: {
+                            "order_by": order_by,
                         }
                     }
                 );

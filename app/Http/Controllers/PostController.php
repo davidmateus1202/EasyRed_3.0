@@ -16,14 +16,15 @@ class PostController extends Controller
 {
     /**
      * index
+     * @param Request $request
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $post = Post::with('user', 'reaction')
             ->withCount(['reaction as reaction_count' => function ($query) {
                 $query->select(\DB::raw('count(*)'));
             }])
-            ->orderBy('created_at', 'desc')
+            ->orderBy('created_at', $request->query('order_by'))
             ->paginate(10);
         
         $post->getCollection()->transform(function ($post) {
