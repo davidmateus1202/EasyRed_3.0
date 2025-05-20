@@ -14,7 +14,7 @@
                      <div class="flex w-full h-auto justify-between mt-2">
                         <input type="file" ref="fileRef" class="hidden" @change="handleFileChange" accept="image/*" />
                         <button @click="openFileDialog" class="flex items-center justify-center gap-3 cursor-pointer hover:bg-gray-100 p-3 rounded-3xl transition duration-300 ease-in-out">
-                            <i class="pi pi-images text-gray-500"></i>
+                            <IconPhotoPlus stroke={1} />
                             <span class="font-bold text-gray-500">Image</span>
                         </button>
 
@@ -100,6 +100,7 @@ import { useUserStore } from '../../Store/UserStore.js'
 import AlertError from '../Alerts/AlertError.vue'
 import Button from '../Button.vue'
 import FilterDropdown from "../FilterDropdown.vue";
+import { IconPhotoPlus } from '@tabler/icons-vue';
 
 const fileRef = ref(null);
 const imagePreview = ref(null);
