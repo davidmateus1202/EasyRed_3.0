@@ -43,7 +43,7 @@ export const useUserStore = defineStore("user", {
                         password: password
                     },
                 )
-                
+                console.log(response)
                 if (response.status === 200) {
                     this.user = response.data.data.user;
                     localStorage.setItem("token", response.data.data.token);

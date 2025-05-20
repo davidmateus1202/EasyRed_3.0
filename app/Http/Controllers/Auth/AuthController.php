@@ -63,51 +63,46 @@ class AuthController extends Controller
             ], 500);
         }
     }
-
-    /**
-     * Register user.
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function register(Request $request) : JsonResponse
+    public function register(Request $request): JsonResponse
     {
-        try {
-            $validated = Validator::make($request->all(), [
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users,email',
-                'password' => 'required|string',
-            ]);
-    
-            if ($validated->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Validation error',
-                    'errors' => $validated->errors(),
-                ], 422);
-            }
-    
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-            ]);
-    
-            $token = $user->createToken('auth_token')->plainTextToken;
-    
-            return response()->json([
-                'status' => true,
-                'message' => 'User registered successfully',
-                'data' => [
-                    'user' => $user,
-                    'token' => $token,
-                ],
-            ]);
+    try {
+        $validated = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string', // debe venir 'password_confirmation'
+        ]);
 
-        } catch (\Exception $e) {
+        if ($validated->fails()) {
             return response()->json([
-                'message' => 'Error al registrar el usuario',
-                'error' => $e->getMessage()
-            ], 500);
+                'status' => false,
+                'message' => 'Validation error',
+                'errors' => $validated->errors(),
+            ], 422);
         }
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'status' => true,
+            'message' => 'User registered successfully',
+            'data' => [
+                'user' => $user,
+                'token' => $token,
+            ],
+        ], 200);
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Error during registration',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
 }
